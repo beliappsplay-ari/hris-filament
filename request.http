@@ -1,0 +1,32 @@
+POST http://127.0.0.1:8000/api/employee/create HTTP/1.1
+content-type: application/json
+X-Client: 7324bsfdsdf*&Uhdj*435JgJHJJjhhdf&^!@
+
+{
+    "fullname": "herry  sabarudin",
+    "dateOfBirth": "Jul 25 1999",
+    "PlaceOfBirth": null,
+    "MaritalStatus": "Single",
+    "Sex": "Male",
+    "Religion": "Moslem",
+    "Nationality": null,
+    "JamsostekNo": null,
+    "NPWPNo": null,
+    "ktp": "3273232507920002",
+    "hp": null,
+    "officetelp": null,
+    "email": "sabarudinherry098@gmail.com",
+    "HTIEmail": null,
+    "ibu_kandung": null,
+    "CorrespondenceAddress": "depok cimanggis",
+    "CorrespondenceCity": "48846",
+    "CorrespondencePostCode": null,
+    "PermanentAddress": null,
+    "PermanentCity": null,
+    "PermanentPostCode": null,
+    "TelephoneNo": "082240181375",
+    "BankName": null,
+    "BankAddress": null,
+    "BankACNo": null,
+    "AccountHolder": null
+}
