@@ -62,7 +62,12 @@ class CreateEmployeeContract extends Page implements HasForms
         // dd($this->record);
         $currentEmployee = $this->record instanceof Employee ? $this->record : Employee::find($this->record);
         // dd($currentEmployee);
-        $this->previousContract = $currentEmployee->contracts()->where('contract_start_date', '<', now())->orderBy('contract_start_date', 'desc')->first();
+        // $this->previousContract = $currentEmployee->contracts()->where('contract_start_date', '<', now())->orderBy('contract_start_date', 'desc')->first();
+        // id terbesar milik employee tsb
+        $this->previousContract = $currentEmployee
+            ->contracts()
+            ->latest('id')          // sama dengan ->orderBy('id', 'desc')
+            ->first();
         if ($this->previousContract) {
             $this->previousContract->load('homebases', 'positions', 'divisions', 'departments', 'businessUnits', 'salaries', 'positionAllowances', 'performanceReviewHistories');
             $this->previousContract->latest_performance_review = $this->previousContract->performanceReviewHistories->sortByDesc('effective_date')->first();
