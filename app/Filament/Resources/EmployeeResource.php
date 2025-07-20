@@ -386,7 +386,7 @@ class EmployeeResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
+                //Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
@@ -401,6 +401,7 @@ class EmployeeResource extends Resource
     public static function getRelations(): array
     {
         return [
+            // ContractsRelationManager::class,
             ContractsRelationManager::class,
             AdvancesRelationManager::class,
             BankRelationManager::class,

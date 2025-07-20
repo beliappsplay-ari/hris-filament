@@ -27,21 +27,22 @@ class ListOthersIncomeTaxables extends ListRecords
             CreateAction::make()
                 ->label('New Data'),
             ActionGroup::make([
-                Action::make(_('phone_limit'))
+                Action::make(__('phone_limit'))
                     ->label('Phone Allowance')
                     ->color('info')
                     ->requiresConfirmation()
                     ->action(function (Action $action): void {
+                        //dd($action->getName());
                         $this->import($action);
                     }),
-                Action::make(_('performance_review_amount'))
+                Action::make(__('performance_review_amount'))
                     ->label('Performance Review')
                     ->color('info')
                     ->requiresConfirmation()
                     ->action(function (Action $action): void {
                         $this->import($action);
                     }),
-                Action::make(_('parking_allowance'))
+                Action::make(__('parking_allowance'))
                     ->label('Parking Allowance')
                     ->color('info')
                     ->requiresConfirmation()
@@ -49,28 +50,28 @@ class ListOthersIncomeTaxables extends ListRecords
                         // dd($action->getName());
                         $this->import($action);
                     }),
-                Action::make(_('relocating_allowance'))
+                Action::make(__('relocating_allowance'))
                     ->label('Relocating Allowance')
                     ->color('info')
                     ->requiresConfirmation()
                     ->action(function (Action $action): void {
                         $this->import($action);
                     }),
-                Action::make(_('position_allowance'))
+                Action::make(__('position_allowance'))
                     ->label('Position Allowance')
                     ->color('info')
                     ->requiresConfirmation()
                     ->action(function (Action $action): void {
                         $this->import($action);
                     }),
-                Action::make(_('sign_in_bonus'))
+                Action::make(__('sign_in_bonus'))
                     ->label('Sign In Bonus')
                     ->color('info')
                     ->requiresConfirmation()
                     ->action(function (Action $action): void {
                         $this->import($action);
                     }),
-                Action::make(_('advance'))
+                Action::make(__('advance'))
                     ->label('Advance')
                     ->color('info')
                     ->requiresConfirmation()
@@ -86,7 +87,7 @@ class ListOthersIncomeTaxables extends ListRecords
 
     public function import(Action $action)
     {
-        // dd($action->getName());
+        //dd($action->getName());
         $period = now();
 
         OthersIncomeTaxable::whereMonth('period', $period->format('m'))
