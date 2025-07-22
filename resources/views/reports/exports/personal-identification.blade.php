@@ -84,6 +84,12 @@
             <td>{{ $record->lastEducation ? $record->lastEducation->name : '' }}</td>
             <td>{{ $record->contract->hay_level }}</td>
             <td>{{ $record->employee->additionalDetails->pos_code }}</td>
+
+             <!--<td>
+                @php $phoneAllowance = $record->allowancesDetails->where('type','Phone Allowance')->first() @endphp
+                {{ $phoneAllowance ? $phoneAllowance->amount : '' }}
+            </td>-->
+
             <td>{{ $record->contract->currentDivision->name }}</td>
             <td>{{ $record->employee->personalData->passport }}</td>
             <td>{{ $record->contract->currentHomebase->name }}</td>
