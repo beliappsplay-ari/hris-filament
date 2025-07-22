@@ -11,6 +11,7 @@ use Filament\Tables\Table;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Pelmered\FilamentMoneyField\Tables\Columns\MoneyColumn;
 
@@ -31,11 +32,18 @@ class ContractsRelationManager extends RelationManager
 
     public function table(Table $table): Table
     {
+        $owner = $this->getOwnerRecord();
         return $table
             ->recordTitleAttribute('type_of_contract_print')
             ->defaultSort('contract_start_date', 'desc')
             ->columns([
-                TextColumn::make('contract_start_date'),
+                TextColumn::make('contract_start_date')
+                ->visible(function($record, $state) use ($owner){
+                    return true;
+                }),
+                TextColumn::make('contract_end_date'),
+                TextColumn::make('tanggal_pengangkatan'),
+                TextColumn::make('tanggal_permanent'),
                 TextColumn::make('contract_end_date'),
                 TextColumn::make('basic_salary'),
                 TextColumn::make('employee_status'),

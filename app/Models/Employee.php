@@ -67,9 +67,7 @@ class Employee extends BaseModel
 
     public function activeContract(){
         $now = now();
-       // dd($this->contracts->where('contract_start_date'));
-        //dd($now->format('Y-m-d'));
-        $activeContract = $this->contracts->where('employee_status','Permanent')
+        $activeContract = $this->contracts->wherein('employee_status',['Permanent','Contract'])
                             ->whereNull('resign_date')
                             ->whereNotNull('join_date')
                             ->where('start_payroll','<=',$now->format('Y-m-d'))
