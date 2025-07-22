@@ -43,7 +43,7 @@ class CreateEmployeeContract extends Page implements HasForms
     protected static string $resource = EmployeeResource::class;
 
     protected static string $view = 'filament.resources.employee-resource.pages.create-employee-contract';
-    protected static ?string $title = "Job Placement";
+    protected static ?string $title = "Job Places Entittlement";
     public $data;
     public $previousContract;
 

@@ -18,7 +18,7 @@ function getSetting($key,$serialize = false){
 			return unserialize($setting->setting_value);
 		}
 
-		return $setting->setting_value;		
+		return $setting->setting_value;
 	}
 
 	return;
@@ -26,11 +26,11 @@ function getSetting($key,$serialize = false){
 }
 
 function toRp($angka,$prefix = true)
-{	
-	if(!$prefix){		
+{
+	if(!$prefix){
 		return number_format($angka,0,',','.');
 	}
- 	return "Rp." . number_format($angka,0,',','.');	
+ 	return "Rp." . number_format($angka,0,',','.');
 }
 
 function penyebut($nilai) {
@@ -57,10 +57,10 @@ function penyebut($nilai) {
         $temp = penyebut($nilai/1000000000) . " milyar" . penyebut(fmod($nilai,1000000000));
     } else if ($nilai < 1000000000000000) {
         $temp = penyebut($nilai/1000000000000) . " triliun" . penyebut(fmod($nilai,1000000000000));
-    }     
+    }
     return $temp;
 }
- 
+
 function terbilang($nilai,$postFix = false) {
     if($nilai<0) {
         $hasil = "minus ". trim(penyebut($nilai));
@@ -90,12 +90,12 @@ function singkatAngka($n, $presisi=2) {
 		$format_angka = number_format($n / 1000000000000, $presisi);
 		$simbol = 'T';
 	}
- 
+
 	if ( $presisi > 0 ) {
 		$pisah = '.' . str_repeat( '0', $presisi );
 		$format_angka = str_replace( $pisah, '', $format_angka );
 	}
-	
+
 	return $format_angka . $simbol;
 }
 
@@ -104,9 +104,9 @@ function generateEMPNO(){
 	if($latestEmployee){
 		return ++$latestEmployee->empno;
 	}else{
-		return 'H0001';
+		return 'CT-00001';
 	}
-	
+
 }
 function statusLabel($auction,$isHtml = false)
 {

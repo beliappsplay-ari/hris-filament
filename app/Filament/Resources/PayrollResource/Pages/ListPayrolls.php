@@ -86,7 +86,7 @@ class ListPayrolls extends ListRecords
                         ->required(),
                 ])
                 ->action(function (array $data): void {
-                    // dd(validatePeriod($data['period']));
+                    // dd($data['period']);
                     if (!isValidPeriod($data['period'])) {
                         Notification::make()
                             ->title('Error Period format')
@@ -96,7 +96,7 @@ class ListPayrolls extends ListRecords
                     }
 
                     $periodCarbon = Carbon::createFromFormat('Ymd', $data['period'] . '01');
-                    // dd($periodCarbon);
+                    // dd($periodCarbon->startOfMonth());
                     $employees = Employee::with(['contracts', 'personalData', 'otherIncomeTaxable'])->get();
                     $isPayrollClosed = Payroll::where('period', $periodCarbon->startOfMonth()->format('Y-m-d'))->where('is_closed',1)->first();
                     
@@ -110,7 +110,7 @@ class ListPayrolls extends ListRecords
                     $currentPayrolls = Payroll::where('period', $periodCarbon->startOfMonth()->format('Y-m-d'))->delete();
                     
                     foreach ($employees as $employee) {
-                        // dd($employee);
+                       //  dd($employee);
                         $activeContract = $employee->activeContract();
                         if ($activeContract) {
                             // cek apakah status tax nya kosong

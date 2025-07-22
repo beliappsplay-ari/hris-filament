@@ -32,6 +32,7 @@ class ListOthersIncomeTaxables extends ListRecords
                     ->color('info')
                     ->requiresConfirmation()
                     ->action(function (Action $action): void {
+                        //dd($action->getName());
                         $this->import($action);
                     }),
                 Action::make(__('performance_review_amount'))
@@ -86,7 +87,7 @@ class ListOthersIncomeTaxables extends ListRecords
 
     public function import(Action $action)
     {
-        // dd($action->getName());
+        //dd($action->getName());
         $period = now();
 
         OthersIncomeTaxable::whereMonth('period', $period->format('m'))
