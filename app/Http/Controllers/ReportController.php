@@ -6,6 +6,9 @@ use App\Exports\BdForForEmployeeExport;
 use App\Exports\BdToHtiExport;
 use App\Exports\BdToHtiRumusExport;
 use App\Exports\PersonalIdentificationExport;
+use App\Exports\ResignListExport;
+use Illuminate\Support\Facades\DB;
+use App\Models\ContractResign;
 use App\Models\Employee;
 use App\Models\Payroll;
 use Carbon\Carbon;
@@ -89,6 +92,34 @@ class ReportController extends Controller
             // dd($data['records']);
             // return view('reports.exports.personal-identification', ['records' => $data['records'], 'period' => $data['period']]);
             return Excel::download(new PersonalIdentificationExport($data), 'personal-identification' . $request->period . '.xlsx');
+        }
+
+        if ($request->type == 'resign-list') {
+          $data['records'] = $employees = ContractResign::select([
+        'employees.id',
+        'employees.empno',
+        'personal_data.first_name',
+        'contracts.resign_date'
+    ])
+    ->leftJoin('personal_data', 'employees.id', '=', 'personal_data.employee_id')
+    ->leftJoin('contracts', 'personal_data.employee_id', '=', 'contracts.employee_id')
+    ->where('contracts.resign_date', '<', '2025-07-01')
+    ->get()
+
+            ->map(function ($item) {
+                    $item->allowancesDetails = collect(json_decode($item->allowances_details));
+                    return $item;
+                });
+
+
+
+
+
+
+         //  dd($data['records']);
+
+            // return view('reports.exports.personal-identification', ['records' => $data['records'], 'period' => $data['period']]);
+            return Excel::download(new ResignListExport($data), 'resign-list' . $request->period . '.xlsx');
         }
     }
 }

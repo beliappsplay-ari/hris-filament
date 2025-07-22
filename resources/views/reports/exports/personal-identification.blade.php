@@ -84,10 +84,12 @@
             <td>{{ $record->lastEducation ? $record->lastEducation->name : '' }}</td>
             <td>{{ $record->contract->hay_level }}</td>
             <td>{{ $record->employee->additionalDetails->pos_code }}</td>
-            <td>{{ $record->contract->currentDivision->name }}</td>
+             <td>{{$record->contract->Division ? $record->contract->Division->name : '' }}</td>
+            
             <td>{{ $record->employee->personalData->passport }}</td>
-            <td>{{ $record->contract->currentHomebase->name }}</td>
-            <td>{{ $record->contract->currentPosition->title }}</td>
+            <td>{{$record->contract->currentHomebase ? $record->contract->currentHomebase->name : '' }}</td>
+ <td>{{$record->contract->currentPosition ? $record->contract->currentPosition->title : '' }}</td>
+
             <td>
                 @php $phoneAllowance = $record->allowancesDetails->where('type','Phone Allowance')->first() @endphp
                 {{ $phoneAllowance ? $phoneAllowance->amount : '' }}
@@ -101,7 +103,9 @@
             <td>{{ $record->employee->personalData->permanent_address }}</td>
             <td>{{ $record->employee->personalData->permanent_city }}</td>
             <td></td>
-            <td>{{$record->contract->previousEmployment->company}}</td>
+<td>{{$record->contract->previousEmployment ? $record->contract->previousEmployment->company : '' }}</td>
+
+            
             <td></td>
             <td>New Office HP (From DGE)</td>
             <td>{{ $record->employee->additionalDetails->telephone }}</td>

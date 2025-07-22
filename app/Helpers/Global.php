@@ -104,7 +104,7 @@ function generateEMPNO(){
 	if($latestEmployee){
 		return ++$latestEmployee->empno;
 	}else{
-		return 'H0001';
+		return 'CT-0001';
 	}
 	
 }

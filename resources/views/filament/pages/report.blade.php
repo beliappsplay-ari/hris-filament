@@ -10,6 +10,7 @@
                 <option value="bd-hti-rumus">Breakdown for HTI Rumus</option>
                 <option value="bd-employee">Breakdown for Employee</option>
                 <option value="personal-identification">Personal Identification</option>
+                 <option value="resign-list">Resign List</option>
             </select>
         </div>
         <div class="mb-5">

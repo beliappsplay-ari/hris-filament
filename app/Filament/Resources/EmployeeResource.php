@@ -386,7 +386,7 @@ class EmployeeResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
+               // Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
@@ -398,6 +398,13 @@ class EmployeeResource extends Resource
             ]);
     }
 
+    public static function getRelationManagersDisplayOrder(): array
+{
+    return [
+        'top'// Relasi akan ditampilkan di atas
+        //'bottom' // Atau bisa dikosongkan jika tidak ada yang di bawah
+    ];
+}
     public static function getRelations(): array
     {
         return [

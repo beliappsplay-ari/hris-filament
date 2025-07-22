@@ -17,7 +17,7 @@ use Pelmered\FilamentMoneyField\Tables\Columns\MoneyColumn;
 class ContractsRelationManager extends RelationManager
 {
     protected static string $relationship = 'contracts';
-    protected static ?string $title = 'Job Placement';
+    protected static ?string $title = 'Job Place Entitlements';
 
     public function form(Form $form): Form
     {
@@ -45,7 +45,7 @@ class ContractsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Action::make('New Job Placement')
+                Action::make('New JobPlaceEntitlement')
                 ->url(
                     function(){
                         return route('filament.admin.resources.employees.new-contract',$this->getOwnerRecord());
