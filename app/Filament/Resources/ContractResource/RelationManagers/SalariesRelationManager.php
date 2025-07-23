@@ -26,9 +26,24 @@ class SalariesRelationManager extends RelationManager
         return $form
             ->schema([
                 Hidden::make('currency')
-                    ->default('IDR'),
+                    ->default('IDR'),                
                 TextInput::make('salary')
-                    ->required(),
+                    ->required()
+                    ->numeric(),
+                TextInput::make('old_salary')
+                ->label('Old Salary')
+                ->disabled()
+                ->dehydrated(false)
+                ->formatStateUsing(function ($state) {
+                    return $state ? toRp($state, false) : 'No previous salary';
+                })
+                ->afterStateHydrated(function (TextInput $component, $state) {
+                    $contract = $this->getOwnerRecord();
+                    $latestSalary = $contract->salaries()
+                        ->orderBy('effective_date', 'desc')
+                        ->first();                    
+                    $component->state($latestSalary ? $latestSalary->salary : null);
+                }),
                 DatePicker::make('effective_date'),
                 TextInput::make('ref_no'),
                 TextInput::make('reason'),
@@ -63,6 +78,18 @@ class SalariesRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
+                ->mutateFormDataUsing(function (array $data): array {
+                    // Ambil salary terakhir dari contract
+                    $contract = $this->getOwnerRecord();
+                    $latestSalary = $contract->salaries()
+                        ->orderBy('effective_date', 'desc')
+                        ->first();
+                    
+                    // Set old_salary dengan salary terakhir jika ada
+                    $data['old_salary'] = $latestSalary ? $latestSalary->salary : null;
+                    
+                    return $data;
+                    })
                 ->after(function(Salary $record, array $data){
                     $contract = $this->getOwnerRecord();
                     $contract->update([

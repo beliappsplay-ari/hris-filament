@@ -188,6 +188,45 @@ class ContractResource extends Resource
                             })
                     ])
                     ->columns(2),
+                Fieldset::make('Basic Salary')
+                    ->schema([
+                        TextInput::make('basic_salary')
+                            ->mask(RawJs::make('$money($input)'))
+                            ->stripCharacters(',')
+                            ->numeric()
+                            ->disabled()
+                            ->suffix('Add Basic Salary')
+                            ->suffixAction(
+                                Action::make('add_basic_salary')
+                                    ->icon('heroicon-m-plus')
+                                    ->form([
+                                        TextInput::make('basic_salary')
+                                            ->mask(RawJs::make('$money($input)'))
+                                            ->stripCharacters(',')
+                                            ->numeric(),
+                                        TextInput::make('basic_salary_remark')
+                                            ->maxLength(255),
+                                        TextInput::make('basic_salary_reason')
+                                            ->maxLength(255),
+                                    ])
+                                    ->action(function (array $data, Model $record, Set $set) {
+                                        $set('basic_salary', toRp($data['basic_salary'], false));
+                                        $record->performanceReviewHistories()->create([
+                                            'effective_date' => now(),
+                                            'amount' => $data['basic_salary'],
+                                            'reason' => $data['basic_salary_reason'],
+                                            'remark' => $data['basic_salary_remark'],
+                                        ]);
+                                        $latestPerformanceReviewHistory = $record->performanceReviewHistories()->orderBy('effective_date', 'desc')->first();
+                                        // dd($latestPerformanceReviewHistory);
+                                        $record->update([
+                                            'basic_salary' => $latestPerformanceReviewHistory->amount,
+                                        ]);
+                                    })
+                            )
+
+                    ])
+                    ->columns(1),
                 Fieldset::make('Performance Review')
                     ->schema([
                         TextInput::make('performance_review_amount')
@@ -597,13 +636,13 @@ class ContractResource extends Resource
         return [
             RelationGroup::make('Histories', [
                 HomebasesRelationManager::class,
+                SalariesRelationManager::class,
                 OriginalWorkbasesRelationManager::class,
                 CurrentWorkbasesRelationManager::class,
                 PositionsRelationManager::class,
                 DivisionsRelationManager::class,
                 DepartmentsRelationManager::class,
-                BusinessUnitsRelationManager::class,
-                SalariesRelationManager::class,
+                BusinessUnitsRelationManager::class,                
                 PhoneLimitHistoriesRelationManager::class,
                 ParkingHistoriesRelationManager::class,
                 RelocatingAllowancesRelationManager::class,
