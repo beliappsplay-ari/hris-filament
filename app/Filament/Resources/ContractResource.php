@@ -188,7 +188,8 @@ class ContractResource extends Resource
                             })
                     ])
                     ->columns(2),
-                     Fieldset::make('Basic Salary')
+                Fieldset::make('Basic Salary')
+
                     ->schema([
                         TextInput::make('basic_salary')
                             ->mask(RawJs::make('$money($input)'))
@@ -224,6 +225,7 @@ class ContractResource extends Resource
                                         // dd($latestBasicSalaryHistory);
                                         $record->update([
                                             'basic_salary' => $latestBasicSalaryHistory->salary,
+
                                         ]);
                                     })
                             )
@@ -649,7 +651,7 @@ TextColumn::make('basic_salary')
     {
         return [
             RelationGroup::make('Histories', [
-                HomebasesRelationManager::class,                
+                HomebasesRelationManager::class, 
                 SalariesRelationManager::class,
                 OriginalWorkbasesRelationManager::class,
                 CurrentWorkbasesRelationManager::class,
