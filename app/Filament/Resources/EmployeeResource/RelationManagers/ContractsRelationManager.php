@@ -65,8 +65,8 @@ class ContractsRelationManager extends RelationManager
                 //     })
             ])
             ->actions([
-                Action::make('View')
-                    ->url(fn (Contract $record): string => route('filament.admin.resources.contracts.view', $record)),
+                // Action::make('View')
+                //     ->url(fn (Contract $record): string => route('filament.admin.resources.contracts.view', $record)),
                 Tables\Actions\EditAction::make()
                     ->url(fn (Contract $record): string => route('filament.admin.resources.contracts.edit', $record)),
                 Tables\Actions\DeleteAction::make(),

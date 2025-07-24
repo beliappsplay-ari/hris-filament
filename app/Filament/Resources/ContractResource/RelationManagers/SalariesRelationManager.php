@@ -26,7 +26,7 @@ class SalariesRelationManager extends RelationManager
         return $form
             ->schema([
                 Hidden::make('currency')
-                    ->default('IDR'),
+                    ->default('IDR'),                
                 TextInput::make('salary')
                     ->required()
                     ->numeric(),
@@ -78,6 +78,18 @@ class SalariesRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
+                ->mutateFormDataUsing(function (array $data): array {
+                    // Ambil salary terakhir dari contract
+                    $contract = $this->getOwnerRecord();
+                    $latestSalary = $contract->salaries()
+                        ->orderBy('effective_date', 'desc')
+                        ->first();
+                    
+                    // Set old_salary dengan salary terakhir jika ada
+                    $data['old_salary'] = $latestSalary ? $latestSalary->salary : null;
+                    
+                    return $data;
+                    })
                 ->after(function(Salary $record, array $data){
                     $contract = $this->getOwnerRecord();
                     $contract->update([
@@ -87,23 +99,6 @@ class SalariesRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-
-                 ->fillForm(function (Salary $record): array {
-                        // Saat edit, tampilkan data existing termasuk old_salary
-                        return [
-                            'currency' => $record->currency,
-                            'old_salary' => $record->old_salary,
-                            'salary' => $record->salary,
-                            'effective_date' => $record->effective_date,
-                            'ref_no' => $record->ref_no,
-                            'reason' => $record->reason,
-                            'ref_date' => $record->ref_date,
-                            'remark' => $record->remark,
-                        ];
-                    })
-
-
-
                 ->after(function(Salary $record, array $data){
                     $contract = $this->getOwnerRecord();
                     $latestSalary = $contract->salaries()->orderBy('effective_date','desc')->first();
