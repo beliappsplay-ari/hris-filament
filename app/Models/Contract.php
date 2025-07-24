@@ -132,6 +132,10 @@ class Contract extends Model
         return $this->hasMany(PerformanceReviewHistory::class);
     }
 
+    public function basicsalaryHistories(){
+        return $this->hasMany(BasicSalaryHistory::class);
+    }
+
     // public function salaries
 
     public function employee(){

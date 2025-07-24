@@ -6,11 +6,11 @@
             <label for="type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Type</label>
             <select name="type" id="type"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                <option value="bd-hti">Breakdown for HTI</option>
-                <option value="bd-hti-rumus">Breakdown for HTI Rumus</option>
-                <option value="bd-employee">Breakdown for Employee</option>
-                <!--<option value="personal-identification">Personal Identification</option>
-                 <option value="resign-list">Resign List</option>-->
+                <option value="personal-identification">Personal Identification</option>
+                 <option value="resign-list">Resign List</option>
+                  <option value="new-hired-list">New Hire List</option>
+                   <option value="reminder">Reminder</option>
+                    <option value="salary-increase">Salary Increase</option>
             </select>
         </div>
         <div class="mb-5">

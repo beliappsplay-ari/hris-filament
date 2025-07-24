@@ -188,6 +188,48 @@ class ContractResource extends Resource
                             })
                     ])
                     ->columns(2),
+                     Fieldset::make('Basic Salary')
+                    ->schema([
+                        TextInput::make('basic_salary')
+                            ->mask(RawJs::make('$money($input)'))
+                            ->stripCharacters(',')
+                            ->numeric()
+                            ->disabled()
+                            ->suffix('Add Basic Salary')
+                            ->suffixAction(
+                                Action::make('add_basic_salary')
+                                    ->icon('heroicon-m-plus')
+                                    ->form([
+                                        TextInput::make('salary')
+                                            ->mask(RawJs::make('$money($input)'))
+                                            ->stripCharacters(',')
+                                            ->numeric(),
+                                        TextInput::make('remark')
+                                            ->maxLength(255),
+                                        TextInput::make('reason')
+                                            ->maxLength(255),
+                                    ])
+                                    ->action(function (array $data, Model $record, Set $set) {
+                                        // dd('Form data:', $data);
+                                      //  dd('Salary value:', $data['salary']);
+                                        $set('salary', toRp($data['salary'], false));
+                                        $record->Salaries()->create([
+                                            'effective_date' => now(),
+                                            'salary' => $data['salary'],
+                                            'reason' => $data['reason'],
+                                            'remark' => $data['remark'],
+                                        ]);
+                                        // dd('Salary value:', $data['salary']);
+                                         $latestBasicSalaryHistory = $record->Salaries()->orderBy('effective_date','desc')->first();
+                                        // dd($latestBasicSalaryHistory);
+                                        $record->update([
+                                            'basic_salary' => $latestBasicSalaryHistory->salary,
+                                        ]);
+                                    })
+                            )
+
+                    ])
+                    ->columns(1),
                 Fieldset::make('Performance Review')
                     ->schema([
                         TextInput::make('performance_review_amount')
@@ -227,6 +269,7 @@ class ContractResource extends Resource
 
                     ])
                     ->columns(1),
+                   
                 Fieldset::make('Allowances')
                     ->schema([
                         TextInput::make('position_allowance')
@@ -512,6 +555,16 @@ class ContractResource extends Resource
                     ->searchable(),
                 TextColumn::make('scope_of_salary')
                     ->searchable(),
+
+
+TextColumn::make('basic_salary')
+                    ->searchable(),
+
+                TextColumn::make('salary')
+                    ->searchable(),
+
+
+
                 IconColumn::make('cdo_entitlement')
                     ->boolean(),
                 IconColumn::make('wee_hours_entitlement')
@@ -596,14 +649,14 @@ class ContractResource extends Resource
     {
         return [
             RelationGroup::make('Histories', [
-                HomebasesRelationManager::class,
+                HomebasesRelationManager::class,                
+                SalariesRelationManager::class,
                 OriginalWorkbasesRelationManager::class,
                 CurrentWorkbasesRelationManager::class,
                 PositionsRelationManager::class,
                 DivisionsRelationManager::class,
                 DepartmentsRelationManager::class,
-                BusinessUnitsRelationManager::class,
-                SalariesRelationManager::class,
+                BusinessUnitsRelationManager::class,                
                 PhoneLimitHistoriesRelationManager::class,
                 ParkingHistoriesRelationManager::class,
                 RelocatingAllowancesRelationManager::class,

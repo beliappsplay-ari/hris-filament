@@ -7,10 +7,15 @@ use App\Exports\BdToHtiExport;
 use App\Exports\BdToHtiRumusExport;
 use App\Exports\PersonalIdentificationExport;
 use App\Exports\ResignListExport;
-use Illuminate\Support\Facades\DB;
+
+use App\Exports\NewHiredListExport;
+use App\Exports\ReminderExport;
+use App\Exports\SalaryIncreaseExport;
+//use Illuminate\Support\Facades\DB;
 use App\Models\ContractResign;
-use App\Models\Employee;
+//use App\Models\Employee;
 use App\Models\Payroll;
+use App\Models\Salary;
 use Carbon\Carbon;
 use Filament\Notifications\Notification;
 use Illuminate\Http\Request;
@@ -103,23 +108,109 @@ class ReportController extends Controller
     ])
     ->leftJoin('personal_data', 'employees.id', '=', 'personal_data.employee_id')
     ->leftJoin('contracts', 'personal_data.employee_id', '=', 'contracts.employee_id')
-    ->where('contracts.resign_date', '<', '2025-07-01')
+    ->where('contracts.resign_date', '<',  $period->format('Y-m-d'))
     ->get()
 
             ->map(function ($item) {
                     $item->allowancesDetails = collect(json_decode($item->allowances_details));
                     return $item;
                 });
-
-
-
-
-
-
-         //  dd($data['records']);
+             //  dd($data['records']);
 
             // return view('reports.exports.personal-identification', ['records' => $data['records'], 'period' => $data['period']]);
             return Excel::download(new ResignListExport($data), 'resign-list' . $request->period . '.xlsx');
         }
+
+  if ($request->type == 'new-hired-list') {
+
+       // $period->format('yyyy-mm');
+         //dd($period->format('yyyy-mm'));
+
+          $data['records'] = $employees = ContractResign::select([
+        'employees.id',
+        'employees.empno',
+        'personal_data.first_name',
+        'contracts.join_date',
+        'contracts.rehire_date'
+    ])
+    ->leftJoin('personal_data', 'employees.id', '=', 'personal_data.employee_id')
+    ->leftJoin('contracts', 'personal_data.employee_id', '=', 'contracts.employee_id')
+    ->where('contracts.rehire_date', 'like',  "%{$period->format('Y-m')}%")
+    ->get()
+
+            ->map(function ($item) {
+                    $item->allowancesDetails = collect(json_decode($item->allowances_details));
+                    return $item;
+                });
+         //  dd($data['records']);
+
+            // return view('reports.exports.personal-identification', ['records' => $data['records'], 'period' => $data['period']]);
+            return Excel::download(new NewHiredListExport($data), 'new-hired-list' . $request->period . '.xlsx');
+        }
+
+
+        if ($request->type == 'reminder') {
+
+       // $period->format('yyyy-mm');
+         //dd($period->format('yyyy-mm'));
+
+          $data['records'] = $employees = ContractResign::select([
+        'employees.id',
+        'employees.empno',
+        'personal_data.first_name',
+        'contracts.join_date',
+        'contracts.rehire_date'
+    ])
+    ->leftJoin('personal_data', 'employees.id', '=', 'personal_data.employee_id')
+    ->leftJoin('contracts', 'personal_data.employee_id', '=', 'contracts.employee_id')
+    ->where('contracts.rehire_date', 'like',  "%{$period->format('Y-m')}%")
+    ->get()
+
+            ->map(function ($item) {
+                    $item->allowancesDetails = collect(json_decode($item->allowances_details));
+                    return $item;
+                });
+         //  dd($data['records']);
+
+            // return view('reports.exports.personal-identification', ['records' => $data['records'], 'period' => $data['period']]);
+            return Excel::download(new ReminderExport($data), 'reminder' . $request->period . '.xlsx');
+        }
+
+
+
+
+
+        if ($request->type == 'salary-increase') {
+
+       // $period->format('yyyy-mm');
+         //dd($period->format('yyyy-mm'));
+
+          $data['records'] = $employees = ContractResign::select([
+        'employees.id',
+        'employees.empno',
+        'personal_data.first_name',
+        'contracts.join_date',
+        'contracts.rehire_date'
+    ])
+    ->leftJoin('personal_data', 'employees.id', '=', 'personal_data.employee_id')
+    ->leftJoin('contracts', 'personal_data.employee_id', '=', 'contracts.employee_id')
+    ->where('contracts.rehire_date', 'like',  "%{$period->format('Y-m')}%")
+    ->get()
+
+            ->map(function ($item) {
+                    $item->allowancesDetails = collect(json_decode($item->allowances_details));
+                    return $item;
+                });
+         //  dd($data['records']);
+
+            // return view('reports.exports.personal-identification', ['records' => $data['records'], 'period' => $data['period']]);
+            return Excel::download(new SalaryIncreaseExport($data), 'salary-increase' . $request->period . '.xlsx');
+        }
+
+
+
+
+
+
     }
 }
