@@ -68,9 +68,11 @@ class AdminPanelProvider extends PanelProvider
                 'HR DATA',
                 'INCOME',
                 'DEDUCTION',
-                'PAYROLL',
+                'PAYROLL',                
+                'BUSINESS TRIP',                
                 'SETUP',
                 'USER MANAGEMENT',
+                
             ]);
     }
 }
