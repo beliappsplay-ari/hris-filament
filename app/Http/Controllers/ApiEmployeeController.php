@@ -41,6 +41,7 @@ class ApiEmployeeController extends Controller
             $employee->personalData()->create([
                 'first_name' => $first_name,
                 'last_name' => $last_name,
+                'email' => $email,
                 'birthday' => $birthday,
                 'birthday_place' => $request->PlaceOfBirth,
                 'sex' => strtolower($request->Sex),
@@ -103,6 +104,7 @@ class ApiEmployeeController extends Controller
         try {
             $employee->personalData()->update([
                 'first_name' => $first_name,
+                'email' => $email,
                 'last_name' => $last_name,
                 'birthday' => $birthday,
                 'birthday_place' => $request->PlaceOfBirth,

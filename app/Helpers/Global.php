@@ -188,7 +188,7 @@ function isValidPeriod($period){
 }
 
 function getPeriodOptions(){
-	$period = new CarbonPeriod(now()->subMonths(6), '1 month', now()->addYears(1));
+	$period = new CarbonPeriod(now()->subYears(3), '1 month', now()->addYears(1));
 	$period = collect($period->map(function(Carbon $date){
 		return $date->format('Ym');
 	}));
