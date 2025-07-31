@@ -17,6 +17,8 @@ use App\Filament\Resources\ContractResource\RelationManagers\PositionAllowancesR
 use App\Filament\Resources\ContractResource\RelationManagers\PositionsRelationManager;
 use App\Filament\Resources\ContractResource\RelationManagers\ProjectsRelationManager;
 use App\Filament\Resources\ContractResource\RelationManagers\RelocatingAllowancesRelationManager;
+use App\Filament\Resources\ContractResource\RelationManagers\AdditionalAllowancesRelationManager;
+use App\Filament\Resources\ContractResource\RelationManagers\otLumpsumsRelationManager;
 use App\Filament\Resources\ContractResource\RelationManagers\SalariesRelationManager;
 use App\Livewire\Contracts\ViewSingleContract;
 use App\Models\Contract;
@@ -338,6 +340,68 @@ class ContractResource extends Resource
                                         ]);
                                     })
                             ),
+                        TextInput::make('additional_allowance')
+                            ->mask(RawJs::make('$money($input)'))
+                            ->stripCharacters(',')
+                            ->numeric()
+                            ->disabled()
+                            ->suffix('Add Additional Allowance')
+                            ->suffixAction(
+                                Action::make('add_additional_allowance')
+                                    ->icon('heroicon-m-plus')
+                                    ->form([
+                                        TextInput::make('amount')
+                                            ->mask(RawJs::make('$money($input)'))
+                                            ->stripCharacters(',')
+                                            ->numeric(),
+                                        DatePicker::make('effective_date'),
+                                        TextInput::make('remark'),
+                                    ])
+                                    ->action(function (array $data, Model $record, Set $set) {
+                                        $set('additional_allowance', toRp($data['amount'], false));
+                                        $record->additionalAllowances()->create([
+                                            'effective_date' => $data['effective_date'],
+                                            'amount' => $data['amount'],
+                                            'remark' => $data['remark']
+                                        ]);
+                                        $latestAdditionalAllowance = $record->additionalAllowances()->orderBy('effective_date', 'desc')->first();
+
+                                        $record->update([
+                                            'additional_allowance' => $latestAdditionalAllowance->amount
+                                        ]);
+                                    })
+                            ),
+                        TextInput::make('ot_lumpsum')
+                            ->mask(RawJs::make('$money($input)'))
+                            ->stripCharacters(',')
+                            ->numeric()
+                            ->disabled()
+                            ->suffix('Add OT Lumpsum')
+                            ->suffixAction(
+                                Action::make('add_ot_lumpsum')
+                                    ->icon('heroicon-m-plus')
+                                    ->form([
+                                        TextInput::make('amount')
+                                            ->mask(RawJs::make('$money($input)'))
+                                            ->stripCharacters(',')
+                                            ->numeric(),
+                                        DatePicker::make('effective_date'),
+                                        TextInput::make('remark'),
+                                    ])
+                                    ->action(function (array $data, Model $record, Set $set) {
+                                        $set('ot_lumpsum', toRp($data['amount'], false));
+                                        $record->otLumpsums()->create([
+                                            'effective_date' => $data['effective_date'],
+                                            'amount' => $data['amount'],
+                                            'remark' => $data['remark']
+                                        ]);
+                                        $latestOtLumpsum = $record->otLumpsums()->orderBy('effective_date', 'desc')->first();
+
+                                        $record->update([
+                                            'ot_lumpsum' => $latestOtLumpsum->amount
+                                        ]);
+                                    })
+                            ),
                         TextInput::make('parking_allowance')
                             ->mask(RawJs::make('$money($input)'))
                             ->stripCharacters(',')
@@ -549,6 +613,12 @@ class ContractResource extends Resource
                 TextColumn::make('relocating_allowance')
                     ->numeric()
                     ->sortable(),
+                TextColumn::make('additional_allowance')
+                    ->numeric()
+                    ->sortable(),
+                TextColumn::make('ot_lumpsum')
+                    ->numeric()
+                    ->sortable(),
                 TextColumn::make('immediate_superior')
                     ->searchable(),
                 TextColumn::make('project_base')
@@ -662,6 +732,8 @@ TextColumn::make('basic_salary')
                 PhoneLimitHistoriesRelationManager::class,
                 ParkingHistoriesRelationManager::class,
                 RelocatingAllowancesRelationManager::class,
+                AdditionalAllowancesRelationManager::class,
+                otLumpsumsRelationManager::class,
                 PositionAllowancesRelationManager::class,
                 PerformanceReviewHistoriesRelationManager::class,
                 ProjectsRelationManager::class

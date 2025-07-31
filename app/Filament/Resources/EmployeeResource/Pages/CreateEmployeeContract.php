@@ -154,6 +154,16 @@ class CreateEmployeeContract extends Page implements HasForms
                         ->stripCharacters(',')
                         ->numeric()
                         ->default($this->previousContract ? $this->previousContract->relocating_allowance : null),
+                    TextInput::make('additional_allowance')
+                        ->mask(RawJs::make('$money($input)'))
+                        ->stripCharacters(',')
+                        ->numeric()
+                        ->default($this->previousContract ? $this->previousContract->additional_allowance : null),
+                    TextInput::make('ot_lumpsum')
+                        ->mask(RawJs::make('$money($input)'))
+                        ->stripCharacters(',')
+                        ->numeric()
+                        ->default($this->previousContract ? $this->previousContract->ot_lumpsum : null),
                     TextInput::make('immediate_superior')
                         ->default($this->previousContract ? $this->previousContract->immediate_superior : null)
                         ->maxLength(255),
@@ -466,6 +476,8 @@ class CreateEmployeeContract extends Page implements HasForms
         $this->data['basic_salary'] = $this->data['basic_salary'] ? str_replace(',', '', $this->data['basic_salary']) : null;
         $this->data['position_allowance'] = $this->data['position_allowance'] ? str_replace(',', '', $this->data['position_allowance']) : null;
         $this->data['relocating_allowance'] = $this->data['relocating_allowance'] ? str_replace(',', '', $this->data['relocating_allowance']) : null;
+        $this->data['additional_allowance'] = $this->data['additional_allowance'] ? str_replace(',', '', $this->data['additional_allowance']) : null;
+        $this->data['ot_lumpsum'] = $this->data['ot_lumpsum'] ? str_replace(',', '', $this->data['ot_lumpsum']) : null;
         $this->data['performance_review_amount'] = $this->data['performance_review_amount'] ? str_replace(',', '', $this->data['performance_review_amount']) : null;
         $this->data['sign_in_bonus'] = $this->data['sign_in_bonus'] ? str_replace(',', '', $this->data['sign_in_bonus']) : null;
         $this->data['penalty_amount'] = $this->data['penalty_amount'] ? str_replace(',', '', $this->data['penalty_amount']) : null;
@@ -542,6 +554,18 @@ class CreateEmployeeContract extends Page implements HasForms
                 $contract->relocatingAllowances()->create([
                     'effective_date' => $contractDate,
                     'amount' => $this->data['relocating_allowance'],
+                ]);
+            }
+            if ($this->data['additional_allowance']) {
+                $contract->additionalAllowances()->create([
+                    'effective_date' => $contractDate,
+                    'amount' => $this->data['additional_allowance'],
+                ]);
+            }
+            if ($this->data['ot_lumpsum']) {
+                $contract->otLumpsums()->create([
+                    'effective_date' => $contractDate,
+                    'amount' => $this->data['ot_lumpsum'],
                 ]);
             }
             if ($this->data['position_allowance']) {

@@ -54,6 +54,8 @@ class OthersIncomeTaxableResource extends Resource
                         'Performance Review' => 'Performance Review',
                         'Parking Allowance' => 'Parking Allowance',
                         'Relocating Allowance' => 'Relocating Allowance',
+                        'Additional Allowance' => 'Additional Allowance',
+                        'OT Lumpsum' => 'OT Lumpsum',
                         'Position Allowance' => 'Position Allowance',
                         'Sign In Bonus' => 'Sign In Bonus',
                         'THR' => 'THR'
@@ -117,6 +119,8 @@ class OthersIncomeTaxableResource extends Resource
                         'Phone Allowance' => 'Phone Allowance',
                         'Parking Allowance' => 'Parking Allowance',
                         'Relocating Allowance' => 'Relocating Allowance',
+                        'Additional Allowance' => 'Additional Allowance',
+                        'OT Lumpsum' => 'OT Lumpsum',
                         'Position Allowance' => 'Position Allowance',
                     ]),
                 Filter::make('period')

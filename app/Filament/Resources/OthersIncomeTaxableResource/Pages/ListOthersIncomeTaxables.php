@@ -57,6 +57,20 @@ class ListOthersIncomeTaxables extends ListRecords
                     ->action(function (Action $action): void {
                         $this->import($action);
                     }),
+                Action::make(__('additional_allowance'))
+                    ->label('Additional Allowance')
+                    ->color('info')
+                    ->requiresConfirmation()
+                    ->action(function (Action $action): void {
+                        $this->import($action);
+                    }),
+                Action::make(__('ot_lumpsum'))
+                    ->label('OT Lumpsum')
+                    ->color('info')
+                    ->requiresConfirmation()
+                    ->action(function (Action $action): void {
+                        $this->import($action);
+                    }),
                 Action::make(__('position_allowance'))
                     ->label('Position Allowance')
                     ->color('info')

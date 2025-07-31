@@ -101,6 +101,10 @@ class EditJobPlace extends Component implements HasForms
                     ->maxLength(255),
                 TextInput::make('relocating_allowance')
                     ->numeric(),
+                TextInput::make('additional_allowance')
+                    ->numeric(),
+                TextInput::make('ot_lumpsum')
+                    ->numeric(),
                 TextInput::make('immediate_superior')
                     ->maxLength(255),
                 TextInput::make('basic_salary')

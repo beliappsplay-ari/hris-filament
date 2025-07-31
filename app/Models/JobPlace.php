@@ -46,6 +46,8 @@ class JobPlace extends BaseModel
         'original_workbase',
         'current_workbase',
         'relocating_allowance',
+        'additional_allowance',
+        'ot_lumpsum',
         'immediate_superior',
         'basic_salary',
         'project_base',
@@ -97,6 +99,8 @@ class JobPlace extends BaseModel
                 'originalWorkbaseHistory',
                 'currentWorkbaseHistory',
                 'relocatingHistory',
+                'additionalHistory',
+                'OtLumpsumHistory',
                 'positionHistory',
                 'divisionHistory',
                 'departmentHistory',
@@ -148,6 +152,16 @@ class JobPlace extends BaseModel
     }
 
     public function relocatingHistory()
+    {
+        return $this->hasMany(RelocationHistory::class);
+    }
+
+    public function additionalHistory()
+    {
+        return $this->hasMany(RelocationHistory::class);
+    }
+
+    public function OtLumpsumHistory()
     {
         return $this->hasMany(RelocationHistory::class);
     }
