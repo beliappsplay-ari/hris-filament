@@ -99,16 +99,33 @@ function singkatAngka($n, $presisi=2) {
 	return $format_angka . $simbol;
 }
 
-function generateEMPNO(){
-	$latestEmployee = Employee::latest()->first();
-	if($latestEmployee){
-		return ++$latestEmployee->empno;
-	}else{
-		return 'CT-0001';
-
-	}
-
+function generateEMPNO()
+{
+    // Get the latest employee ordered by empno in descending order
+    $latestEmployee = Employee::orderBy('empno', 'desc')->first();
+    
+    if ($latestEmployee && $latestEmployee->empno) {
+        // Extract the numeric part from empno (e.g., "CT-00019" -> "00019")
+        $empno = $latestEmployee->empno;
+        
+        // Check if empno follows the expected format (CT-XXXXX)
+        if (preg_match('/^CT-(\d+)$/', $empno, $matches)) {
+            $numericPart = (int) $matches[1]; // Convert "00019" to 19
+            $newNumber = $numericPart + 1;    // Increment to 20
+            
+            // Format back to CT-XXXXX with leading zeros (5 digits)
+            return 'CT-' . str_pad($newNumber, 5, '0', STR_PAD_LEFT);
+        } else {
+            // If format doesn't match, log error and start from CT-00001
+            \Log::warning("Unexpected empno format: {$empno}. Starting from CT-00001");
+            return 'CT-00001';
+        }
+    } else {
+        // No employees exist yet, start from CT-00001
+        return 'CT-00001';
+    }
 }
+
 function statusLabel($auction,$isHtml = false)
 {
 	if($auction->hasReachStage(10,true) && $auction->status != 'deleted'){
