@@ -43,6 +43,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use LaraZeus\Accordion\Forms\Accordion;
 use LaraZeus\Accordion\Forms\Accordions;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
+use Illuminate\Support\Arr;
 
 class EmployeeResource extends Resource
 {
@@ -57,13 +58,25 @@ class EmployeeResource extends Resource
         return $form
             ->schema([
                 Group::make()
-                    ->inlineLabel()
-                    ->schema([
-                        TextInput::make('empno')
-                            ->default(generateEMPNO())
-                            ->readOnly()
-                            ->required()
-                            ->maxLength(255),
+    ->inlineLabel()
+    ->schema([
+        Select::make('project')
+    ->options(collect(config('rollo.projects'))->pluck('name', 'name'))
+    ->disabled(fn ($livewire) => $livewire instanceof Pages\EditEmployee) // Hanya disable di halaman edit
+  ->dehydrated(fn ($livewire) => !($livewire instanceof Pages\EditEmployee)) // Dehydrated false hanya di edit
+    ->required(fn ($livewire) => !($livewire instanceof Pages\EditEmployee)) // Hanya required saat create                     
+    //->required()
+    ->live()
+    ->afterStateUpdated(function ($state, callable $set) {
+        if (!$state) return;
+        
+        $prefix = Arr::get(config('rollo.projects'), "{$state}.prefix", 'CT-');
+        $set('empno', generateEMPNO($prefix));
+    }),
+TextInput::make('empno')
+    ->readOnly()
+    ->required()
+    ->maxLength(255),
                         FileUpload::make('image')
                             ->avatar()
                             ->image()
@@ -325,8 +338,8 @@ class EmployeeResource extends Resource
     {
         return $table
             ->modifyQueryUsing(function (Builder $query) {
-                return $query->with(['personalData', 'additionalDetails', 'completenessPersonalData']);
-            })
+                  return $query->with(['personalData', 'additionalDetails', 'completenessPersonalData']);
+        })
             ->columns([
                 ImageColumn::make('image')
                     ->circular()
@@ -345,6 +358,27 @@ class EmployeeResource extends Resource
                     ->hidden(true)
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
+
+TextColumn::make('latest_contract_status')
+                ->label('Contract Status')
+                ->getStateUsing(function (Employee $record) {
+                    $latestContract = $record->contracts()->latest()->first();
+                    if (!$latestContract) {
+                        return 'No Contract';
+                    }
+                    return $latestContract->resign_date ? 'Resigned' : 'Active';
+                })
+                ->badge()
+                ->color(fn (string $state): string => match ($state) {
+                    'Active' => 'success',
+                    'Resigned' => 'danger',
+                    'No Contract' => 'gray',
+                })
+                ->toggleable(isToggledHiddenByDefault: false),
+
+
+
+
                 IconColumn::make('completenessPersonalData')
                     ->label('Completeness')
                     ->icon(function (Model $record) {
@@ -383,8 +417,34 @@ class EmployeeResource extends Resource
 
             ])
             ->filters([
-                //
-            ])
+                Tables\Filters\Filter::make('active_employees')
+                ->label('Active Employees Only')
+                ->query(fn (Builder $query): Builder => 
+                    $query->whereDoesntHave('contractsToview', function ($q) {
+                        $q->whereNotNull('resign_date');
+                    })
+                )
+                ->default(), // Set sebagai default
+            
+            Tables\Filters\Filter::make('resigned_employees')
+                ->label('Resigned Employees Only')
+                ->query(fn (Builder $query): Builder => 
+                    $query->whereHas('contractsToview', function ($q) {
+                        $q->whereNotNull('resign_date')
+                          ->whereIn('id', function ($subQuery) {
+                              $subQuery->selectRaw('MAX(id)')
+                                       ->from('contracts')
+                                       ->groupBy('employee_id');
+                          });
+                    })
+                ),
+            
+            Tables\Filters\Filter::make('no_contracts')
+                ->label('No Contracts')
+                ->query(fn (Builder $query): Builder => 
+                    $query->whereDoesntHave('contractsToview')
+                ),
+        ])
             ->actions([
                 //Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),

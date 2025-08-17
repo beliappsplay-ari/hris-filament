@@ -149,5 +149,20 @@
         'bpjsKesehatanAmount' => 480000,
         'insuranceAmount' => 180000,
         'max_bpjs_kesehatan' => 12000000,
-        'max_bpjs_pension' => 9559000
+        'max_bpjs_pension' => 9559000,
+        
+         'projects' => [
+        'CMI-DGE' => [
+            'name' => 'CMI-DGE',
+            'prefix' => 'CT-'
+        ],
+        'NSN-DGE' => [
+            'name' => 'NSN-DGE', 
+            'prefix' => 'SC-'
+        ],
+        'NSN-ERAJASA' => [
+            'name' => 'NSN-ERAJASA',
+            'prefix' => 'SCE-'
+        ]
+    ]
     ];

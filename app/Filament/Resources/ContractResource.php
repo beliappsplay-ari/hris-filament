@@ -17,6 +17,8 @@ use App\Filament\Resources\ContractResource\RelationManagers\PositionAllowancesR
 use App\Filament\Resources\ContractResource\RelationManagers\PositionsRelationManager;
 use App\Filament\Resources\ContractResource\RelationManagers\ProjectsRelationManager;
 use App\Filament\Resources\ContractResource\RelationManagers\RelocatingAllowancesRelationManager;
+
+use App\Filament\Resources\ContractResource\RelationManagers\CallAllowancesRelationManager;
 use App\Filament\Resources\ContractResource\RelationManagers\AdditionalAllowancesRelationManager;
 use App\Filament\Resources\ContractResource\RelationManagers\otLumpsumsRelationManager;
 use App\Filament\Resources\ContractResource\RelationManagers\SalariesRelationManager;
@@ -79,6 +81,8 @@ class ContractResource extends Resource
     }
     public static function form(Form $form): Form
     {
+\Log::info('Form schema being built');
+
         return $form
             ->schema([
                 Fieldset::make('Contract')
@@ -340,6 +344,7 @@ class ContractResource extends Resource
                                         ]);
                                     })
                             ),
+                            
                         TextInput::make('additional_allowance')
                             ->mask(RawJs::make('$money($input)'))
                             ->stripCharacters(',')
@@ -371,6 +376,54 @@ class ContractResource extends Resource
                                         ]);
                                     })
                             ),
+                        
+                            
+TextInput::make('test_before_call') // TAMBAH INI
+    ->label('Test Before Call'),
+
+TextInput::make('call_allowance')
+    ->label('Call Allowance Simple'),
+
+TextInput::make('test_after_call') // TAMBAH INI  
+    ->label('Test After Call'),
+
+            TextInput::make('call_allowance')
+            ->mask(RawJs::make('$money($input)'))
+            ->stripCharacters(',')
+            ->numeric()
+            ->disabled()
+            ->suffix('Add Call Allowance')
+            ->suffixAction(
+                Action::make('add_call_allowance')
+                    ->icon('heroicon-m-plus')
+                    ->form([
+                        TextInput::make('amount')
+                            ->mask(RawJs::make('$money($input)'))
+                            ->stripCharacters(',')
+                            ->numeric(),
+                        DatePicker::make('effective_date'),
+                        TextInput::make('remark'),
+                    ])
+                    ->action(function (array $data, Model $record, Set $set) {
+                        $set('call_allowance', toRp($data['amount'], false));
+                        $record->callAllowances()->create([
+                            'effective_date' => $data['effective_date'],
+                            'amount' => $data['amount'],
+                            'remark' => $data['remark']
+                        ]);
+                        $latestCallAllowance = $record->callAllowances()->orderBy('effective_date', 'desc')->first();
+
+                        $record->update([
+                            'call_allowance' => $latestCallAllowance->amount
+                        ]);
+                    })
+            ),
+   
+
+
+
+
+
                         TextInput::make('ot_lumpsum')
                             ->mask(RawJs::make('$money($input)'))
                             ->stripCharacters(',')
@@ -613,6 +666,9 @@ class ContractResource extends Resource
                 TextColumn::make('relocating_allowance')
                     ->numeric()
                     ->sortable(),
+                 TextColumn::make('call_allowance')
+                    ->numeric()
+                    ->sortable(),
                 TextColumn::make('additional_allowance')
                     ->numeric()
                     ->sortable(),
@@ -733,6 +789,7 @@ TextColumn::make('basic_salary')
                 ParkingHistoriesRelationManager::class,
                 RelocatingAllowancesRelationManager::class,
                 AdditionalAllowancesRelationManager::class,
+                CallAllowancesRelationManager::class,
                 otLumpsumsRelationManager::class,
                 PositionAllowancesRelationManager::class,
                 PerformanceReviewHistoriesRelationManager::class,

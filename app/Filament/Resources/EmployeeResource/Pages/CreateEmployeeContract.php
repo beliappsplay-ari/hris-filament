@@ -159,6 +159,26 @@ class CreateEmployeeContract extends Page implements HasForms
                         ->stripCharacters(',')
                         ->numeric()
                         ->default($this->previousContract ? $this->previousContract->additional_allowance : null),
+                        TextInput::make('laptop_allowance')
+                        ->mask(RawJs::make('$money($input)'))
+                        ->stripCharacters(',')
+                        ->numeric()
+                        ->default($this->previousContract ? $this->previousContract->laptop_allowance : null),
+                         TextInput::make('call_allowance')
+                        ->mask(RawJs::make('$money($input)'))
+                        ->stripCharacters(',')
+                        ->numeric()
+                        ->default($this->previousContract ? $this->previousContract->call_allowance : null),
+                         TextInput::make('modem_allowance')
+                        ->mask(RawJs::make('$money($input)'))
+                        ->stripCharacters(',')
+                        ->numeric()
+                        ->default($this->previousContract ? $this->previousContract->modem_allowance : null),
+                         TextInput::make('bpjs_allowance')
+                        ->mask(RawJs::make('$money($input)'))
+                        ->stripCharacters(',')
+                        ->numeric()
+                        ->default($this->previousContract ? $this->previousContract->bpjs_allowance : null),
                     TextInput::make('ot_lumpsum')
                         ->mask(RawJs::make('$money($input)'))
                         ->stripCharacters(',')
@@ -476,6 +496,10 @@ class CreateEmployeeContract extends Page implements HasForms
         $this->data['basic_salary'] = $this->data['basic_salary'] ? str_replace(',', '', $this->data['basic_salary']) : null;
         $this->data['position_allowance'] = $this->data['position_allowance'] ? str_replace(',', '', $this->data['position_allowance']) : null;
         $this->data['relocating_allowance'] = $this->data['relocating_allowance'] ? str_replace(',', '', $this->data['relocating_allowance']) : null;
+         $this->data['laptop_allowance'] = $this->data['laptop_allowance'] ? str_replace(',', '', $this->data['laptop_allowance']) : null;
+          $this->data['call_allowance'] = $this->data['call_allowance'] ? str_replace(',', '', $this->data['call_allowance']) : null;
+           $this->data['modem_allowance'] = $this->data['modem_allowance'] ? str_replace(',', '', $this->data['modem_allowance']) : null;
+            $this->data['bpjs_allowance'] = $this->data['bpjs_allowance'] ? str_replace(',', '', $this->data['bpjs_allowance']) : null;
         $this->data['additional_allowance'] = $this->data['additional_allowance'] ? str_replace(',', '', $this->data['additional_allowance']) : null;
         $this->data['ot_lumpsum'] = $this->data['ot_lumpsum'] ? str_replace(',', '', $this->data['ot_lumpsum']) : null;
         $this->data['performance_review_amount'] = $this->data['performance_review_amount'] ? str_replace(',', '', $this->data['performance_review_amount']) : null;
@@ -562,6 +586,35 @@ class CreateEmployeeContract extends Page implements HasForms
                     'amount' => $this->data['additional_allowance'],
                 ]);
             }
+
+ if ($this->data['laptpo_allowance']) {
+                $contract->laptopAllowances()->create([
+                    'effective_date' => $contractDate,
+                    'amount' => $this->data['laptpo_allowance'],
+                ]);
+            }
+
+             if ($this->data['modem_allowance']) {
+                $contract->modemAllowances()->create([
+                    'effective_date' => $contractDate,
+                    'amount' => $this->data['modem_allowance'],
+                ]);
+            }
+
+             if ($this->data['call_allowance']) {
+                $contract->callAllowances()->create([
+                    'effective_date' => $contractDate,
+                    'amount' => $this->data['call_allowance'],
+                ]);
+            }
+
+             if ($this->data['bpjs_allowance']) {
+                $contract->bpjsAllowances()->create([
+                    'effective_date' => $contractDate,
+                    'amount' => $this->data['bpjs_allowance'],
+                ]);
+            }
+
             if ($this->data['ot_lumpsum']) {
                 $contract->otLumpsums()->create([
                     'effective_date' => $contractDate,

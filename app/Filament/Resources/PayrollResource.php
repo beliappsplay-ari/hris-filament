@@ -36,6 +36,53 @@ class PayrollResource extends Resource
     {
         return $form
             ->schema([
+Select::make('project')
+                ->label('Project')
+                ->options(collect(config('rollo.projects'))->pluck('name', 'name'))
+                ->required()
+                ->live()
+                ->afterStateUpdated(function ($state, callable $set) {
+                    if (!$state) {
+                        $set('employee_id', null);
+                        return;
+                    }
+                    
+                    // Ambil prefix dari konfigurasi rollo.php
+                    $prefix = config("rollo.projects.{$state}.prefix");
+                    
+                    // Filter karyawan berdasarkan prefix
+                    $employees = Employee::where('empno', 'like', $prefix . '%')
+                        ->with('personalData')  // Eager load personal data
+                        ->get()
+                        ->map(function($employee) {
+                            return [
+                                'id' => $employee->id,
+                                'name' => "{$employee->personalData->first_name} {$employee->personalData->last_name} ({$employee->empno})"
+                            ];
+                        })
+                        ->pluck('name', 'id');
+                        
+                    $set('employee_options', $employees);
+                }),
+
+            Select::make('employee_id')
+                ->label('Employee')
+                ->options(function (callable $get) {
+                    return $get('employee_options') ?? [];
+                })
+                ->disabled(fn ($get) => !$get('project'))
+                ->required(),
+
+
+
+
+
+
+
+
+
+
+
                 Forms\Components\DatePicker::make('period'),
                 Forms\Components\TextInput::make('employee_id')
                     ->numeric(),
@@ -66,6 +113,10 @@ class PayrollResource extends Resource
                     return $record->period->format('M Y');
                 })
                 ->searchable(),
+                TextColumn::make('employee.empno')
+        ->label('Empno')
+        ->searchable()
+        ->sortable(),
                 TextColumn::make('employee.full_name')
                     ->label('Employee')
                     ->searchable(query: function (Builder $query, string $search): Builder {

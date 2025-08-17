@@ -32,6 +32,7 @@ class Contract extends Model
                 'parkingHistories',
                 'relocatingAllowances',
                 'additionalAllowances',
+                'callAllowances',
                 'otLumpsums',
                 'positionAllowances',
                 'performanceReviewHistories'
@@ -129,6 +130,9 @@ class Contract extends Model
     }
     public function additionalAllowances(){
         return $this->hasMany(AdditionalAllowance::class);
+    }
+     public function callAllowances(){
+        return $this->hasMany(CallAllowance::class);
     }
     public function otLumpsums(){
         return $this->hasMany(OtLumpsum::class);

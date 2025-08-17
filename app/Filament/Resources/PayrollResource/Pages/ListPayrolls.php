@@ -70,6 +70,40 @@ class ListPayrolls extends ListRecords
                 }),
             Action::make('Update Payroll')
                 ->form([
+                    Select::make('project')
+            ->label('Project')
+            ->options([
+                'CMI' => 'CMI',
+                'NSN-DGE' => 'NSN-DGE',
+                'NSN ERAJASA' => 'NSN ERAJASA'
+            ])
+            ->afterStateUpdated(function ($state, callable $set) {
+                // Reset employee selection when project changes
+                $set('employee_id', null);
+                
+                if (!$state) return;
+                
+                // Define prefix mapping
+                $prefixMap = [
+                    'CMI' => ['CT-', 'SC-'],
+                    'NSN-DGE' => ['SC-'],
+                    'NSN ERAJASA' => ['SCE-']
+                ];
+                
+                $prefixes = $prefixMap[$state] ?? [];
+                
+                // Query employees based on prefixes
+                $employees = Employee::where(function($query) use ($prefixes) {
+                    foreach ($prefixes as $prefix) {
+                        $query->orWhere('empno', 'like', $prefix . '%');
+                    }
+                })
+                ->get()
+                ->pluck('full_name', 'id');
+                
+                $set('employee_options', $employees);
+            })
+            ->required(),
                     TextInput::make('period')
                         ->default(now()->format('Ym'))
                         // ->native()
@@ -97,7 +131,37 @@ class ListPayrolls extends ListRecords
 
                     $periodCarbon = Carbon::createFromFormat('Ymd', $data['period'] . '01');
                     // dd($periodCarbon->startOfMonth());
-                    $employees = Employee::with(['contracts', 'personalData', 'otherIncomeTaxable'])->get();
+                     $project = $data['project'];
+                    $prefixMap = [
+        'CMI' => ['CT-'],
+        'NSN-DGE' => ['SC-'],
+        'NSN ERAJASA' => ['SCE-']
+    ];
+    
+    $prefixes = $prefixMap[$project] ?? [];
+    
+    if (empty($prefixes)) {
+        Notification::make()
+            ->title('Invalid project selected')
+            ->danger()
+            ->send();
+        return;
+    }
+
+
+                   // $employees = Employee::with(['contracts', 'personalData', 'otherIncomeTaxable'])->get();
+
+
+$employees = Employee::where(function($query) use ($prefixes) {
+        foreach ($prefixes as $prefix) {
+            $query->orWhere('empno', 'like', $prefix . '%');
+        }
+    })
+    ->with(['contracts', 'personalData', 'otherIncomeTaxable'])
+    ->get();
+
+
+
                     $isPayrollClosed = Payroll::where('period', $periodCarbon->startOfMonth()->format('Y-m-d'))->where('is_closed',1)->first();
                     
                     if($isPayrollClosed){
@@ -107,8 +171,14 @@ class ListPayrolls extends ListRecords
                             ->send();
                         return;
                     }
-                    $currentPayrolls = Payroll::where('period', $periodCarbon->startOfMonth()->format('Y-m-d'))->delete();
-                    
+                    //$currentPayrolls = Payroll::where('period', $periodCarbon->startOfMonth()->format('Y-m-d'))->delete();
+                        $employeeIdsToUpdate = $employees->pluck('id')->toArray();
+
+$currentPayrolls =Payroll::where('period', $periodCarbon->startOfMonth()->format('Y-m-d'))
+        ->whereIn('employee_id', $employeeIdsToUpdate)
+        ->delete();
+
+
                     foreach ($employees as $employee) {
                        //  dd($employee);
                         $activeContract = $employee->activeContract();

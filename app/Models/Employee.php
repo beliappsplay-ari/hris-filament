@@ -65,6 +65,11 @@ class Employee extends BaseModel
         return $this->hasMany(Contract::class);
     }
 
+
+     public function contractsToview(){
+        return $this->hasMany(Contract::class, 'employee_id');
+    }
+
     public function activeContract(){
         $now = now();
         $activeContract = $this->contracts->wherein('employee_status',['Permanent','Contract'])
